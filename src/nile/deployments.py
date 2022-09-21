@@ -33,10 +33,10 @@ def update(address, abi, network, alias):
         raise Exception(f"{file} does not exist")
 
     lines = None
-
     with open(file, "r") as fp:
         lines = fp.readlines()
 
+    found = 0
     for i in range(len(lines)):
         line_address = lines[i].strip().split(":")[0]
         if line_address == address:
@@ -46,14 +46,18 @@ def update(address, abi, network, alias):
             replacement += "\n"
 
             lines[i] = replacement
+            found = 1
 
             if alias is not None:
                 logging.info(f"📦 Updating deployment as {alias} in {file}")
             else:
                 logging.info(f"📦 Updating {address} in {file}")
-
-    with open(file,'w+') as fp:
-        fp.writelines(lines)
+    
+    if not found:
+        raise Exception(f"Address {address} does not exist in {file}")
+    else:
+        with open(file,'w+') as fp:
+            fp.writelines(lines)
 
 
 def register_class_hash(hash, network, alias):
