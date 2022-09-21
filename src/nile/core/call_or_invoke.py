@@ -8,13 +8,13 @@ from nile.common import GATEWAYS, prepare_params
 
 
 def call_or_invoke(
-    contract, type, method, params, network, signature=None, max_fee=None, abi=None
+    contract, type, method, params, network, signature=None, max_fee=None, override_abi=None
 ):
     """Call or invoke functions of StarkNet smart contracts."""
-    address, use_abi = next(deployments.load(contract, network))
+    address, abi = next(deployments.load(contract, network))
 
-    if abi is not None:
-        use_abi = abi
+    if override_abi is not None:
+        abi = override_abi
 
     command = [
         "starknet",
@@ -22,7 +22,7 @@ def call_or_invoke(
         "--address",
         address,
         "--abi",
-        use_abi,
+        abi,
         "--function",
         method,
     ]

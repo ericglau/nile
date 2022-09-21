@@ -26,19 +26,19 @@ class NileRuntimeEnvironment:
         """Declare a smart contract class."""
         return declare(contract, self.network, alias)
 
-    def deploy(self, contract, arguments=None, alias=None, overriding_path=None):
+    def deploy(self, contract, arguments=None, alias=None, overriding_path=None, override_abi=None):
         """Deploy a smart contract."""
-        return deploy(contract, arguments, self.network, alias, overriding_path)
+        return deploy(contract, arguments, self.network, alias, overriding_path, override_abi=override_abi)
 
-    def call(self, contract, method, params=None, abi=None):
+    def call(self, contract, method, params=None, override_abi=None):
         """Call a view function in a smart contract."""
         return str(
-            call_or_invoke(contract, "call", method, params, self.network, abi=abi)
+            call_or_invoke(contract, "call", method, params, self.network, override_abi=override_abi)
         ).split()
 
-    def invoke(self, contract, method, params=None, abi=None):
+    def invoke(self, contract, method, params=None, override_abi=None):
         """Invoke a mutable function in a smart contract."""
-        return call_or_invoke(contract, "invoke", method, params, self.network, abi=abi)
+        return call_or_invoke(contract, "invoke", method, params, self.network, override_abi=override_abi)
 
     def get_deployment(self, identifier):
         """Get a deployment by its identifier (address or alias)."""
