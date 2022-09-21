@@ -25,12 +25,43 @@ def register(address, abi, network, alias):
         fp.write("\n")
 
 
+def update(address, abi, network, alias):
+    """Update a deployment at an existing address."""
+    file = f"{network}.{DEPLOYMENTS_FILENAME}"
+
+    if not os.path.exists(file):
+        raise Exception(f"{file} does not exist")
+
+    lines = None
+
+    with open(file, "r") as fp:
+        lines = fp.readlines()
+
+    for i in range(len(lines)):
+        line_address = lines[i].strip().split(":")[0]
+        if line_address == address:
+            replacement = f"{address}:{abi}"
+            if alias is not None:
+                replacement += f":{alias}"
+            replacement += "\n"
+
+            lines[i] = replacement
+
+            if alias is not None:
+                logging.info(f"📦 Updating deployment as {alias} in {file}")
+            else:
+                logging.info(f"📦 Updating {address} in {file}")
+
+    with open(file,'w+') as fp:
+        fp.writelines(lines)
+
+
 def register_class_hash(hash, network, alias):
     """Register a new deployment."""
     file = f"{network}.{DECLARATIONS_FILENAME}"
 
     if class_hash_exists(hash, network):
-        raise Exception(f"Hash {hash[:6]}...{hash[-6:]} already exists in {file}")
+        raise HashExistsException(hash, file)
 
     with open(file, "a") as fp:
         if alias is not None:
@@ -84,3 +115,10 @@ def load_class(identifier, network):
             identifiers = [x for x in [hash] + alias]
             if identifier in identifiers:
                 yield hash
+
+class HashExistsException(Exception):
+    """Raised when the hash already exists"""
+    def __init__(self, hash, file):
+        message = f"Hash {hash[:6]}...{hash[-6:]} already exists in {file}"
+        super().__init__(message)
+        self.hash = hash
