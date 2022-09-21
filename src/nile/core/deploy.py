@@ -4,7 +4,7 @@ import logging
 from nile import deployments
 from nile.common import ABIS_DIRECTORY, BUILD_DIRECTORY, parse_information, run_command
 
-def deploy(contract_name, arguments, network, alias, overriding_path=None, override_abi=None):
+def deploy(contract_name, arguments, network, alias, overriding_path=None, overriding_abi=None):
     """Deploy StarkNet smart contracts."""
     logging.info(f"🚀 Deploying {contract_name}")
     base_path = (
@@ -12,8 +12,8 @@ def deploy(contract_name, arguments, network, alias, overriding_path=None, overr
     )
     abi = f"{base_path[1]}/{contract_name}.json"
 
-    if override_abi is not None:
-        abi = override_abi
+    if overriding_abi is not None:
+        abi = overriding_abi
 
     output = run_command(contract_name, network, overriding_path, arguments=arguments)
 
