@@ -65,7 +65,7 @@ def register_class_hash(hash, network, alias):
     file = f"{network}.{DECLARATIONS_FILENAME}"
 
     if class_hash_exists(hash, network):
-        raise HashExistsException(hash, file)
+        raise Exception(f"Hash {hash[:6]}...{hash[-6:]} already exists in {file}")
 
     with open(file, "a") as fp:
         if alias is not None:
@@ -119,10 +119,3 @@ def load_class(identifier, network):
             identifiers = [x for x in [hash] + alias]
             if identifier in identifiers:
                 yield hash
-
-class HashExistsException(Exception):
-    """Raised when the hash already exists"""
-    def __init__(self, hash, file):
-        message = f"Hash {hash[:6]}...{hash[-6:]} already exists in {file}"
-        super().__init__(message)
-        self.hash = hash
