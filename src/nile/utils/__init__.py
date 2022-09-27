@@ -8,7 +8,7 @@ from nile.common import ABIS_DIRECTORY, BUILD_DIRECTORY
 try:
     from starkware.crypto.signature.fast_pedersen_hash import pedersen_hash
     from starkware.starknet.business_logic.execution.objects import Event
-    from starkware.starknet.compiler.compile import compile_starknet_files
+    from starkware.starknet.services.api.contract_class import ContractClass
     from starkware.starknet.core.os.class_hash import compute_class_hash
     from starkware.starknet.public.abi import get_selector_from_name
     from starkware.starkware_utils.error_handling import StarkException
@@ -124,11 +124,10 @@ def assert_event_emitted(tx_exec_info, from_address, name, data):
 
 
 def get_hash(contract_name, overriding_path=None):
-    """Return the class_hash of a given contract class."""
+    """Return the class hash (in hex) of a given contract class."""
     base_path = (
         overriding_path if overriding_path else (BUILD_DIRECTORY, ABIS_DIRECTORY)
     )
-    contract_class = compile_starknet_files(
-        files=[f"{base_path[1]}/{contract_name}.cairo"], debug_info=True
-    )
-    return compute_class_hash(contract_class=contract_class, hash_func=pedersen_hash)
+    with open(f"{base_path[0]}/{contract_name}.json", "r") as fp:
+        contract_class = ContractClass.loads(fp.read())
+    return hex(compute_class_hash(contract_class=contract_class, hash_func=pedersen_hash))
