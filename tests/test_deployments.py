@@ -174,7 +174,10 @@ def test_register_class_hash():
         register_class_hash(**args)
         raise AssertionError("register expected to fail due to existing declaration")
     except Exception as e:
-        assert "already exists in file" in str(e)
+        assert (
+            f"Hash 0x0000...000111 already exists in {LOCALHOST}.{DECLARATIONS_FILENAME}"
+            in str(e)
+        )
 
     with open(f"{LOCALHOST}.{DECLARATIONS_FILENAME}", "r") as fp:
         lines = fp.readlines()
