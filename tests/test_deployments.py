@@ -1,7 +1,7 @@
 """Tests for deployments file."""
 import pytest
 
-from nile.common import DEPLOYMENTS_FILENAME, DECLARATIONS_FILENAME
+from nile.common import DECLARATIONS_FILENAME, DEPLOYMENTS_FILENAME
 from nile.deployments import register, register_class_hash, unregister, update_abi
 from nile.utils import hex_class_hash, normalize_number
 
@@ -164,7 +164,10 @@ def test_register_class_hash():
         lines = fp.readlines()
     assert len(lines) == 1
 
-    assert lines[0].strip() == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
+    assert (
+        lines[0].strip()
+        == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
+    )
 
     # try registering the same hash
     try:
@@ -172,9 +175,12 @@ def test_register_class_hash():
         raise AssertionError("register expected to fail due to existing declaration")
     except Exception as e:
         assert "already exists in file" in str(e)
-    
+
     with open(f"{LOCALHOST}.{DECLARATIONS_FILENAME}", "r") as fp:
         lines = fp.readlines()
     assert len(lines) == 1
 
-    assert lines[0].strip() == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
+    assert (
+        lines[0].strip()
+        == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
+    )
