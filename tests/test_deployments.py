@@ -164,23 +164,17 @@ def test_register_class_hash():
         lines = fp.readlines()
     assert len(lines) == 1
 
-    assert (
-        lines[0].strip()
-        == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
-    )
+    assert lines[0].strip() == f"{hex_class_hash(CLASS_HASH)}:{A_ALIAS}:{A_ALIAS_ALT}"
 
     # try registering the same hash
     try:
         register_class_hash(**args)
         raise AssertionError("register expected to fail due to existing declaration")
     except Exception as e:
-        assert "Hash 0x0000...000111 already exists" in str(e)
+        assert "Hash 0x0000...00006f already exists" in str(e)
 
     with open(f"{LOCALHOST}.{DECLARATIONS_FILENAME}", "r") as fp:
         lines = fp.readlines()
     assert len(lines) == 1
 
-    assert (
-        lines[0].strip()
-        == f"{hex_class_hash(CLASS_HASH)}:{A_ABI}:{A_ALIAS}:{A_ALIAS_ALT}"
-    )
+    assert lines[0].strip() == f"{hex_class_hash(CLASS_HASH)}:{A_ALIAS}:{A_ALIAS_ALT}"
