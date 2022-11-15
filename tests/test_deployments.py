@@ -34,7 +34,7 @@ def tmp_working_dir(monkeypatch, tmp_path):
 
 
 @pytest.mark.parametrize(
-    "address_or_alias, abi, expected_lines",
+    "address_or_alias, abi, expected_address_hex, expected_lines",
     [
         (
             normalize_number(A_ADDR),
