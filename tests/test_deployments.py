@@ -49,7 +49,7 @@ def tmp_working_dir(monkeypatch, tmp_path):
         (
             A_ALIAS,
             A_ABI_2,
-            A_ADDR,
+            B_ADDR,
             [
                 f"{A_ADDR}:{A_ABI_2}:{A_ALIAS}:{A_ALIAS_ALT}",
                 f"{B_ADDR}:{B_ABI}:{B_ALIAS}",
