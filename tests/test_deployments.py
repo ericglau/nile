@@ -5,7 +5,7 @@ import pytest
 
 from nile.common import DECLARATIONS_FILENAME, DEPLOYMENTS_FILENAME
 from nile.deployments import register, register_class_hash, unregister, update_abi
-from nile.utils import hex_address, hex_class_hash, normalize_number
+from nile.utils import hex_class_hash, normalize_number
 
 LOCALHOST = "localhost"
 
@@ -44,7 +44,7 @@ def tmp_working_dir(monkeypatch, tmp_path):
                 f"{A_ADDR}:{A_ABI_2}:{A_ALIAS}:{A_ALIAS_ALT}",
                 f"{B_ADDR}:{B_ABI}:{B_ALIAS}",
                 f"{C_ADDR}:{C_ABI}",
-            ],            
+            ],
         ),
         (
             A_ALIAS,
@@ -88,7 +88,9 @@ def tmp_working_dir(monkeypatch, tmp_path):
         ),
     ],
 )
-def test_update_deployment(address_or_alias, abi, expected_address_hex, expected_lines, caplog):
+def test_update_deployment(
+    address_or_alias, abi, expected_address_hex, expected_lines, caplog
+):
     register(normalize_number(A_ADDR), A_ABI, LOCALHOST, f"{A_ALIAS}:{A_ALIAS_ALT}")
     register(normalize_number(B_ADDR), B_ABI, LOCALHOST, B_ALIAS)
     register(normalize_number(C_ADDR), C_ABI, LOCALHOST, None)
@@ -102,7 +104,10 @@ def test_update_deployment(address_or_alias, abi, expected_address_hex, expected
 
     update_abi(address_or_alias, abi, LOCALHOST)
 
-    assert f"Updating {expected_address_hex} in {LOCALHOST}.{DEPLOYMENTS_FILENAME}" in caplog.text
+    assert (
+        f"Updating {expected_address_hex} in {LOCALHOST}.{DEPLOYMENTS_FILENAME}"
+        in caplog.text
+    )
 
     with open(f"{LOCALHOST}.{DEPLOYMENTS_FILENAME}", "r") as fp:
         lines = fp.readlines()
