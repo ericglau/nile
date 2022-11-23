@@ -182,18 +182,44 @@ class Account(AsyncObject):
         watch_mode=None,
     ):
         """Execute or simulate an Account transaction."""
-        target_address = self._get_target_address(address_or_alias)
+        return await self.send_multicall([[address_or_alias, method, calldata]], nonce, max_fee, query_type, watch_mode)
+
+    async def send_multicall(
+        self,
+        calls,
+        nonce=None,
+        max_fee=None,
+        query_type=None,
+        watch_mode=None,
+    ):
+        """Execute or simulate an Account transaction with multicall."""
+        processed_calls = []
+        for call in calls:
+
+            assert len(call) == 3, "Invalid call parameters"
+
+            address_or_alias = call[0]
+            method = call[1]
+            calldata = call[2]
+
+            # get target address with the right format
+            target_address = self._get_target_address(address_or_alias)
+
+            calldata = await self._process_calldata(calldata)
+
+            processed_calls.append([target_address, method, calldata])
 
         # process and parse arguments
-        max_fee, nonce, calldata = await self._process_arguments(
-            max_fee, nonce, calldata
+        max_fee, nonce = await self._process_arguments(
+            max_fee, nonce
         )
 
+        # get tx version
         tx_version = QUERY_VERSION if query_type else TRANSACTION_VERSION
 
         calldata, sig_r, sig_s = self.signer.sign_invoke(
             sender=self.address,
-            calls=[[target_address, method, calldata]],
+            calls=processed_calls,
             nonce=nonce,
             max_fee=max_fee,
             version=tx_version,
@@ -233,13 +259,16 @@ class Account(AsyncObject):
 
         return target_address
 
-    async def _process_arguments(self, max_fee, nonce, calldata=None):
+    async def _process_arguments(self, max_fee, nonce):
         max_fee = 0 if max_fee is None else int(max_fee)
 
         if nonce is None:
             nonce = await get_nonce(self.address, self.network)
 
+        return max_fee, nonce
+
+    async def _process_calldata(self, calldata=None):
         if calldata is not None:
             calldata = [normalize_number(x) for x in calldata]
 
-        return max_fee, nonce, calldata
+        return calldata
