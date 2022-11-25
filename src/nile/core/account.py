@@ -187,6 +187,7 @@ class Account(AsyncObject):
         alias,
         max_fee=None,
         deployer_address=None,
+        overriding_path=None,
         abi=None,
         watch_mode=None,
     ):
@@ -195,7 +196,7 @@ class Account(AsyncObject):
             deployer_address or UNIVERSAL_DEPLOYER_ADDRESS
         )
 
-        await deploy_with_deployer(
+        return await deploy_with_deployer(
             self,
             contract_name,
             salt,
@@ -204,6 +205,7 @@ class Account(AsyncObject):
             alias,
             deployer_address,
             max_fee,
+            overriding_path=overriding_path,
             abi=abi,
             watch_mode=watch_mode,
         )
